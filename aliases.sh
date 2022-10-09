@@ -180,13 +180,13 @@ cordorequi () {
 alias RUN='run'
 
 # todo V1 RUN du pc perso, en commentaire car la version 2 viendra remplacer 
-# run () {
-# 	adb devices;
-# 	yarn build;
-# 	cd 'src-cordova';
-# 	cordova run android;
-# 	cd '../'
-# }
+runperso () {
+	adb devices;
+	yarn build;
+	cd 'src-cordova';
+	cordova run android;
+	cd '../'
+}
 
 # todo V2 que j'utilise avec distrilog
 run () {
@@ -204,9 +204,9 @@ run () {
 			$ret
 		else
 			echo '#########################################'
-			echo '                                       '
-			echo "    LE PDA << $name >> N'EXISTE PAS    "
-			echo '                                       '
+			echo '                                         '
+			echo "    LE PDA << $name >> N'EXISTE PAS      "
+			echo '                                         '
 			echo '#########################################'
 		fi
 	else
