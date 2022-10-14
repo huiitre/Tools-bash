@@ -105,7 +105,7 @@ dfl () {
 #todo Serveur avec un port spécifique
 phpserv () {
 	#* Attribut à 8080 par défaut
-	param=${1-8080}
+	param=${1-5050}
 	var1="php -S localhost:$param -t public"
 	$var1
 }
