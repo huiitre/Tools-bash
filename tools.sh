@@ -82,9 +82,9 @@ On_IWhite='\033[0;107m'   # White
 #!||              PHP & Symfony               #!||
 #!||                                          #!||
 #!###############################################!
-alias sy='bin/console'
-alias mm='bin/console make:migration'
-alias dmm='bin/console doctrine:migration:migrate'
+alias sy='php bin/console'
+alias mm='php bin/console make:migration'
+alias dmm='php bin/console doctrine:migration:migrate'
 # alias dfl='bin/console d:f:l' remplacé par la fonction
 
 #todo Fixtures avec un nom de groupe
@@ -93,12 +93,12 @@ dfl () {
 	if [ -z $param ]
 	then
 		printf $On_Green$BCyan"Commande :$Color_Off\n"
-		printf $On_IRed$BCyan"> bin/console d:f:l$Color_Off"
-		bin/console d:f:l
+		printf $On_IRed$BCyan"> php bin/console d:f:l$Color_Off"
+		php bin/console d:f:l
 	else
 		printf $On_Green$BCyan"Commande :$Color_Off\n"
-		printf $On_IRed$BCyan"> bin/console d:f:l --group=$param$Color_Off"
-		bin/console d:f:l --group=$param
+		printf $On_IRed$BCyan"> php bin/console d:f:l --group=$param$Color_Off"
+		php bin/console d:f:l --group=$param
 	fi
 }
 
