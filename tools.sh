@@ -86,6 +86,7 @@ alias sy='php bin/console'
 alias mm='php bin/console make:migration'
 alias dmm='php bin/console doctrine:migration:migrate'
 # alias dfl='bin/console d:f:l' remplacé par la fonction
+alias DFL='dfl'
 
 #todo Fixtures avec un nom de groupe
 dfl () {
