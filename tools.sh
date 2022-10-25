@@ -150,6 +150,14 @@ checkout() {
 #!||                                          #!||
 #!###############################################!
 
+# Test d'extraction d'une BDD d'un PDA
+ext() {
+	adb shell run-as net.distrilog.easymobile sh -c "/sdcard/test.txt > /data/data/net.distrilog.easymobile/app_webview/Default/databases/file__0/test.txt"
+	# Réponse : 
+	# /system/bin/sh: can't create /data/data/net.distrilog.easymobile/app_webview/Default/databases/file__0/test.txt: Permission denied
+	# Besoin de root le pda
+}
+
 alias adbd='adb devices'
 
 #todo /-----/ LOG JAVA /-----/
