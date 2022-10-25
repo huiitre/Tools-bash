@@ -149,6 +149,8 @@ checkout() {
 #!||                                          #!||
 #!###############################################!
 
+alias adbd='adb devices'
+
 #todo /-----/ LOG JAVA /-----/
 logcat() {
 	adb logcat -c;
