@@ -152,7 +152,7 @@ checkout() {
 
 # Test d'extraction d'une BDD d'un PDA
 ext() {
-	adb shell run-as net.distrilog.easymobile sh -c "/sdcard/test.txt > /data/data/net.distrilog.easymobile/app_webview/Default/databases/file__0/test.txt"
+	adb shell run-as net.distrilog.easymobile sh -c "/ > /data/data/net.distrilog.easymobile/app_webview/Default/databases/file__0/1"
 	# Réponse : 
 	# /system/bin/sh: can't create /data/data/net.distrilog.easymobile/app_webview/Default/databases/file__0/test.txt: Permission denied
 	# Besoin de root le pda
