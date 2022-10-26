@@ -1,4 +1,3 @@
-
 #!###############################################!
 #!||                                          #!||
 #!||             Variables color              #!||
@@ -122,6 +121,23 @@ phpserv () {
 # 	alias php$c="php -S localhost:$c -t public"
 # 	# Exemple de commande à taper : "php2020"
 # done
+
+#!###############################################!
+#!                                              #!
+#!                   REACT JS                   #!
+#!                                              #!
+#!###############################################!
+
+create-app() {
+	# copie des fichiers cachés et non-cachés présents à la racine du modèle
+	# note : des alertes sont affichées à propos de dossiers ignorés, c'est normal
+	cp -n C:/wamp64/www/perso/React-modele/{.*,*} .
+
+	# copie (récursive) des dossiers src/, config/ et public/
+	# note : des alertes sont affichées à propos de dossiers ignorés, c'est normal
+	cp -rn C:/wamp64/www/perso/React-modele/{src,config,public} .
+}
+
 
 #!###############################################!
 #!||                                          #!||
