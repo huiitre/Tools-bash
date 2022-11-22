@@ -1,3 +1,14 @@
+
+#! PERMET DE RELOAD LE TERMINAL
+#! A FAIRE APRES CHAQUE MODIFICATION ET SAUVEGARDE
+rel () {
+	source ~/.bashrc
+	printf $BIGreen"Restart de la console effectué !"$Color_Off
+}
+alias reload='rel'
+alias RELOAD='rel'
+alias REL='rel'
+
 #!###############################################!
 #!||                                          #!||
 #!||             Variables color              #!||
@@ -158,6 +169,14 @@ checkout() {
 		cmd="git checkout ${attr}"
 	fi
 	$cmd
+}
+
+#todo commit
+commit () {
+	message=${1}
+	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
+
+	git commit -m "$branch - $message"
 }
 
 #!###############################################!
