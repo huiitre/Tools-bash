@@ -10,3 +10,5 @@ then
 fi
 ```
 *On vient ajouter le contenu de tools.sh, ce qui nous donne ensuite accès à tous les alias et à toutes les fonctions*
+
+Pour recharger le terminal sans le fermer, lancer la fonction `reload`
