@@ -91,9 +91,28 @@ alias RELOAD='reload'
 alias rel='reload'
 alias REL='reload'
 
-quote () {
+#todo escape les simple quote (pas utilisé car bizarre)
+escapeQuote () {
 	local quoted=${1//\'/\'\\\'\'};
   printf "'%s'" "$quoted"
+}
+
+#todo échappe les simples quotes (mais pas encore les double)
+quote_args() {
+	local sq="'"
+	local dq='"'
+	local space=""
+	local backtic='\'
+	local arg
+
+	for arg; do
+			string1=$(echo -n "$space"${arg//$sq/$backtic$sq})
+			# string2=$(echo -n "$space$dq"${string1//$dq/$backtic$dq}"$dq")
+			# echo 'string2 : ' $string2
+
+			echo -n $string1
+			# echo -n "$space'${arg//$sq/$backtic$sq}'"
+	done
 }
 
 #!###############################################!
@@ -188,6 +207,8 @@ gitreset () {
 
 #todo commit
 commit () {
+	echo 'Fonction commit'
+
 	#* On récupère le nom de la branche courante
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
 	#* On récupère le nombre d'arguments de la fonction
@@ -197,17 +218,18 @@ commit () {
 	#* On déclare le début de la commande
 	local cmd="git commit -m "
 
-	local cleanString=$(quote "$argList")
-	echo 'arguments : '$cleanString
+	# local cleanQuote=$(quote_args "$argList")
+
+	# echo ""$cleanQuote""
 
 	#* Si il y a au moins un argument
-	# if [[ $argTotal -gt 0 ]]
-	# then
-	# 	printf $BIPurple"Commit sur $On_Green $branch $Color_Off\n"
-	# 	# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
-	# 	printf $BIPurple"Message : $On_Green $argList $Color_Off\n\n"
-	# 	$cmd"$argList"
-	# fi
+	if [[ $argTotal -gt 0 ]]
+	then
+		printf $BIPurple"Commit sur $On_Green $branch $Color_Off\n"
+		# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
+		printf $BIPurple"Message : $On_Green $argList $Color_Off\n\n"
+		$cmd "$argList"
+	fi
 }
 
 #!###############################################!
