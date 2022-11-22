@@ -197,7 +197,8 @@ commit () {
 	#* On déclare le début de la commande
 	local cmd="git commit -m "
 
-	echo $argList
+	local cleanString=$(quote "$argList")
+	echo 'arguments : '$cleanString
 
 	#* Si il y a au moins un argument
 	# if [[ $argTotal -gt 0 ]]
@@ -206,7 +207,7 @@ commit () {
 	# 	# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
 	# 	printf $BIPurple"Message : $On_Green $argList $Color_Off\n\n"
 	# 	$cmd"$argList"
-	fi
+	# fi
 }
 
 #!###############################################!
