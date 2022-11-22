@@ -207,8 +207,6 @@ gitreset () {
 
 #todo commit
 commit () {
-	echo 'Fonction commit'
-
 	#* On récupère le nom de la branche courante
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
 	#* On récupère le nombre d'arguments de la fonction
@@ -218,10 +216,6 @@ commit () {
 	#* On déclare le début de la commande
 	local cmd="git commit -m "
 
-	# local cleanQuote=$(quote_args "$argList")
-
-	# echo ""$cleanQuote""
-
 	#* Si il y a au moins un argument
 	if [[ $argTotal -gt 0 ]]
 	then
@@ -229,6 +223,8 @@ commit () {
 		# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
 		printf $BIPurple"Message : $On_Green $argList $Color_Off\n\n"
 		$cmd "$branch : $argList"
+	else
+		printf $BIRed"Le message de commit est vide !"$Color_Off
 	fi
 }
 
