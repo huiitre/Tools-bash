@@ -173,10 +173,19 @@ checkout() {
 
 #todo commit
 commit () {
-	message=${1}
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
+	local argTotal=$#
+	local argList=$@
 
-	git commit -m "$branch - $message"
+	echo 'branche : '$branch
+	echo 'message : '$message
+	echo 'nombre de paramètres : '$argTotal
+	echo 'liste des paramètres : '$argList
+
+	cmd="git commit -m "
+	message=$cmd"$argList"
+	# test=$(git commit -m "$branch - $message"
+	message
 }
 
 #!###############################################!
