@@ -244,7 +244,7 @@ lol () {
 	# * Version 1.0
 
 	# ! Récupération du nom de la fonction principale
-	scriptName=$FUNCNAME
+	readonly scriptName=$FUNCNAME
 
 	#! Fonction help
 	Help () {
