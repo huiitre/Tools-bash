@@ -180,7 +180,8 @@ commit () {
 
 	if [[ $argTotal -gt 0 ]]
 	then
-		printf $BIPurple"Commit sur $branch$Color_Off\n"
+		printf $BIPurple"Commit sur $On_Green$branch$Color_Off\n"
+		print "Message : "
 		$cmd"$argList"
 	fi
 }
