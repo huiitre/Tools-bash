@@ -173,16 +173,21 @@ checkout() {
 
 #todo commit
 commit () {
+	#* On récupère le nom de la branche courante
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
+	#* On récupère le nombre d'arguments de la fonction
 	local argTotal=$#
+	#* La liste des arguments
 	local argList=$@
+	#* On déclare le début de la commande
 	local cmd="git commit -m "
 
+	#* Si il y a au moins un argument
 	if [[ $argTotal -gt 0 ]]
 	then
 		printf $BIPurple"Commit sur $On_Green $branch $Color_Off\n"
 		# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
-		printf "Message : $argList"
+		printf "Message : $argList\n"
 		$cmd"$argList"
 	fi
 }
