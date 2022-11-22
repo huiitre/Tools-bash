@@ -1,14 +1,3 @@
-
-#! PERMET DE RELOAD LE TERMINAL
-#! A FAIRE APRES CHAQUE MODIFICATION ET SAUVEGARDE
-rel () {
-	source ~/.bashrc
-	printf $BIGreen"Restart de la console effectué !"$Color_Off
-}
-alias reload='rel'
-alias RELOAD='rel'
-alias REL='rel'
-
 #!###############################################!
 #!||                                          #!||
 #!||             Variables color              #!||
@@ -86,6 +75,26 @@ On_IBlue='\033[0;104m'    # Blue
 On_IPurple='\033[0;105m'  # Purple
 On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
+
+#!###############################################!
+#!||                                          #!||
+#!||                  General                 #!||
+#!||                                          #!||
+#!###############################################!
+#todo PERMET DE RELOAD LE TERMINAL
+#todo A FAIRE APRES CHAQUE MODIFICATION ET SAUVEGARDE
+reload () {
+	source ~/.bashrc
+	printf $BIGreen"Restart de la console effectué !"$Color_Off
+}
+alias RELOAD='reload'
+alias rel='reload'
+alias REL='reload'
+
+quote () {
+	local quoted=${1//\'/\'\\\'\'};
+  printf "'%s'" "$quoted"
+}
 
 #!###############################################!
 #!||                                          #!||
@@ -171,6 +180,12 @@ checkout() {
 	$cmd
 }
 
+#todo RESET COMMIT (pour test de la fonction commit)
+gitreset () {
+	ret='git reset --soft HEAD^'
+	$ret
+}
+
 #todo commit
 commit () {
 	#* On récupère le nom de la branche courante
@@ -182,13 +197,15 @@ commit () {
 	#* On déclare le début de la commande
 	local cmd="git commit -m "
 
+	echo $argList
+
 	#* Si il y a au moins un argument
-	if [[ $argTotal -gt 0 ]]
-	then
-		printf $BIPurple"Commit sur $On_Green $branch $Color_Off\n"
-		# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
-		printf "Message : $argList\n"
-		$cmd"$argList"
+	# if [[ $argTotal -gt 0 ]]
+	# then
+	# 	printf $BIPurple"Commit sur $On_Green $branch $Color_Off\n"
+	# 	# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
+	# 	printf $BIPurple"Message : $On_Green $argList $Color_Off\n\n"
+	# 	$cmd"$argList"
 	fi
 }
 
