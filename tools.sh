@@ -176,16 +176,13 @@ commit () {
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
 	local argTotal=$#
 	local argList=$@
+	local cmd="git commit -m "
 
-	echo 'branche : '$branch
-	echo 'message : '$message
-	echo 'nombre de paramètres : '$argTotal
-	echo 'liste des paramètres : '$argList
-
-	cmd="git commit -m "
-	message=$cmd"$argList"
-	# test=$(git commit -m "$branch - $message"
-	message
+	if [[ $argTotal -gt 0 ]]
+	then
+		echo $BIPurple'Commit sur '$branch ' : '$argList$Color_Off
+		$cmd"$argList"
+	fi
 }
 
 #!###############################################!
