@@ -182,7 +182,7 @@ commit () {
 	then
 		printf $BIPurple"Commit sur $On_Green $branch $Color_Off\n"
 		# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
-		printf $argList
+		# printf $argList
 		$cmd"$argList"
 	fi
 }
