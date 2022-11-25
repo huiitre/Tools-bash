@@ -223,7 +223,7 @@ commit () {
 		# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
 		printf $BIPurple"Message : $On_Green $argList $Color_Off\n\n"
 		message=$cmd "$branch : $argList"
-		echo $message
+		$cmd "$message"
 	else
 		printf $BIRed"Le message de commit est vide !"$Color_Off
 	fi
