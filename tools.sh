@@ -205,7 +205,7 @@ gitreset () {
 	$ret
 }
 
-#todo commit 
+#todo commit
 commit () {
 	#* On récupère le nom de la branche courante
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
@@ -222,7 +222,8 @@ commit () {
 		printf $BIPurple"Commit sur $On_Green $branch $Color_Off\n"
 		# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
 		printf $BIPurple"Message : $On_Green $argList $Color_Off\n\n"
-		$cmd "$branch : $argList"
+		message=$cmd "$branch : $argList"
+		echo $message
 	else
 		printf $BIRed"Le message de commit est vide !"$Color_Off
 	fi
@@ -445,12 +446,12 @@ lol () {
 			echo 'val apres : '${array[@]}
 
 			# * on replace dans le fichier le reste des pda
-			for key in ${!array[@]}
-			do
+			# for key in ${!array[@]}
+			# do
 				# todo récupérer le contenu du fichier puis insérer la ligne courant
 				# todo puis faire ça pour chaque ligne afin de ne pas écraser à chaque fois
 				# echo -e "$key"="${array[$key]}\n" > data.txt
-			done
+			# done
 
 			# * On récupère tous les PDA et on les range dans un tableau associatif
 			# * Je sais pas ce que ça fait, mais ça le fait
