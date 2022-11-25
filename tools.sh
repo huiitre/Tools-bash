@@ -205,7 +205,7 @@ gitreset () {
 	$ret
 }
 
-#todo commit
+#todo commit 
 commit () {
 	#* On récupère le nom de la branche courante
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
