@@ -279,17 +279,20 @@ runperso () {
 
 # todo V2 que j'utilise avec distrilog
 run () {
+	local pwd=$(pwd)
+	local CURRENT_PATH=$pwd"/pda/"
+
 	string=$(adb devices)
 	if [ ${#string} -gt 24 ]
 	then
 		read -p "Veuillez cibler le PDA [defaut : eda52]: " name
 		name=${name:-eda52}
-		if [ -e "C:\Users\Yanis\Desktop\test\pda\run_$name.bat" ]
+		if [ -e $CURRENT_PATH"run_$name.bat" ]
 		then
 			echo '##################################'
 			echo "||    LANCEMENT DU BUILD ...    ||"
 			echo '##################################'
-			ret="C:\Users\Yanis\Desktop\test\pda\run_$name.bat"
+			ret=$CURRENT_PATH"run_$name.bat"
 			$ret
 		else
 			echo '#########################################'
