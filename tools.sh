@@ -143,7 +143,7 @@ dfl () {
 
 #todo Serveur avec un port spécifique
 phpserv () {
-	#* Attribut à 8080 par défaut
+	#* port à 5050 par défaut
 	param=${1-5050}
 	var1="php -S localhost:$param -t public"
 	$var1
@@ -185,6 +185,7 @@ create-app() {
 #!###############################################!
 
 # todo checkout fonction
+# todo penser à refaire en prenant compte des dossiers bug/, feature/, etc ...
 #* fonction qui permet de switch d'une branche à une autre
 #* évite de devoir taper les guillemets "" pour entourer le numéro de ticket
 checkout() {
@@ -199,7 +200,7 @@ checkout() {
 	$cmd
 }
 
-#todo RESET COMMIT (pour test de la fonction commit)
+#todo RESET COMMIT (pour le dev de la fonction commit)
 gitreset () {
 	ret='git reset --soft HEAD^'
 	$ret
@@ -234,7 +235,7 @@ commit () {
 #!||                                          #!||
 #!###############################################!
 
-# Test d'extraction d'une BDD d'un PDA
+#todo Test d'extraction d'une BDD d'un PDA
 ext() {
 	adb shell run-as net.distrilog.easymobile sh -c "/ > /data/data/net.distrilog.easymobile/app_webview/Default/databases/file__0/1"
 	# Réponse : 
@@ -268,7 +269,7 @@ cordorequi () {
 # todo alias run to RUN
 alias RUN='run'
 
-# todo V1 RUN du pc perso, en commentaire car la version 2 viendra remplacer 
+# todo V1 RUN du pc perso
 runperso () {
 	adb devices;
 	yarn build;
@@ -279,17 +280,20 @@ runperso () {
 
 # todo V2 que j'utilise avec distrilog
 run () {
+	local pwd=$(pwd)
+	local CURRENT_PATH=$pwd"/pda/"
+
 	string=$(adb devices)
 	if [ ${#string} -gt 24 ]
 	then
 		read -p "Veuillez cibler le PDA [defaut : eda52]: " name
 		name=${name:-eda52}
-		if [ -e "C:\Users\Yanis\Desktop\test\pda\run_$name.bat" ]
+		if [ -e $CURRENT_PATH"run_$name.bat" ]
 		then
 			echo '##################################'
 			echo "||    LANCEMENT DU BUILD ...    ||"
 			echo '##################################'
-			ret="C:\Users\Yanis\Desktop\test\pda\run_$name.bat"
+			ret=$CURRENT_PATH"run_$name.bat"
 			$ret
 		else
 			echo '#########################################'
@@ -441,16 +445,28 @@ lol () {
 			echo 'key avant : '${!array[@]}
 			echo 'val avant : '${array[@]}
 			unset array[$name]
-			echo 'key apres : '${!array[@]}
-			echo 'val apres : '${array[@]}
+			# echo 'key apres : '${!array[@]}
+			# echo 'val apres : '${array[@]}
 
 			# * on replace dans le fichier le reste des pda
-			# for key in ${!array[@]}
-			# do
+			for key in ${!array[@]}
+			do
 				# todo récupérer le contenu du fichier puis insérer la ligne courant
 				# todo puis faire ça pour chaque ligne afin de ne pas écraser à chaque fois
 				# echo -e "$key"="${array[$key]}\n" > data.txt
-			# done
+				# * on récupère le contenu courant du fichier
+				# echo 'key apres : '${!array[@]}
+				# echo 'val apres : '${array[@]}
+				content=$(cat data.txt)
+				# echo -e "key : $key"
+				# echo -e "value : ${array[$key]}"
+				echo -e $key="${array[$key]}\n" > data.txt
+				echo $content
+				# echo -e $content > data.txt
+				# echo -e "contenu fin de boucle : $content\n"
+
+				# echo -e "$content\n" > data.txt
+			done
 
 			# * On récupère tous les PDA et on les range dans un tableau associatif
 			# * Je sais pas ce que ça fait, mais ça le fait
@@ -542,7 +558,7 @@ lol () {
 
 		#? RUN LE BUILD
 		"")
-			echo "salut salut";;
+			echo "salut salutsqdqsqsd";;
 
 		#? COMMANDE INCORRECT
 		*)
