@@ -283,25 +283,58 @@ run () {
 	local pwd=$(pwd)
 	local CURRENT_PATH=$pwd"/pda/"
 
+	printf $BIBlue"CURRENT_PATH : $CURRENT_PATH$Color_Off\n"
+
 	string=$(adb devices)
+	opt=$1
+	
+	# * est-ce qu'un pda est branché ? adb devices
 	if [ ${#string} -gt 24 ]
 	then
-		read -p "Veuillez cibler le PDA [defaut : eda52]: " name
-		name=${name:-eda52}
-		if [ -e $CURRENT_PATH"run_$name.bat" ]
+		# * est-ce qu'une option a été écrite après la fonction ? "funcName blabla"
+		if [ ! -z $opt ]
 		then
-			echo '##################################'
-			echo "||    LANCEMENT DU BUILD ...    ||"
-			echo '##################################'
-			ret=$CURRENT_PATH"run_$name.bat"
-			$ret
+			# * est-ce que le pda demandé existe dans le dossier /pda ?
+			if [ -e $CURRENT_PATH"run_$opt.bat" ]
+			then
+				echo '##################################'
+				echo "||    LANCEMENT DU BUILD ...    ||"
+				echo '##################################'
+				printf $BIPurple"PDA : $opt$Color_Off"
+				ret=$CURRENT_PATH"run_$name.bat"
+				$ret
+			# * le pda demandé n'existe pas dans le dossier
+			else
+				echo '#########################################'
+				echo '                                         '
+				echo "    LE PDA << $opt >> N'EXISTE PAS      "
+				echo '                                         '
+				echo '#########################################'
+			fi
+		# * pas d'option, on demande le nom du pda
 		else
-			echo '#########################################'
-			echo '                                         '
-			echo "    LE PDA << $name >> N'EXISTE PAS      "
-			echo '                                         '
-			echo '#########################################'
+			# * on récupère le pda demandé par l'user
+			read -p "Veuillez cibler le PDA [defaut : eda52]: " name
+			name=${name:-eda52}
+			# * est-ce que le pda demandé existe dans le dossier /pda ?
+			if [ -e $CURRENT_PATH"run_$name.bat" ]
+			then
+				echo '##################################'
+				echo "||    LANCEMENT DU BUILD ...    ||"
+				echo '##################################'
+				printf $BIPurple"PDA : $name$opt$Color_Off"
+				ret=$CURRENT_PATH"run_$name.bat"
+				$ret
+			# * le pda demandé n'existe pas dans le dossier
+			else
+				echo '#########################################'
+				echo '                                         '
+				echo "    LE PDA << $name >> N'EXISTE PAS      "
+				echo '                                         '
+				echo '#########################################'
+			fi
 		fi
+	# * adb devices renvoie aucuns pda
 	else
 		echo '#################################################'
 		echo '||                                             ||'
