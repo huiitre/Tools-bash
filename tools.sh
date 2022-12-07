@@ -210,6 +210,9 @@ gitreset () {
 commit () {
 	#* On récupère le nom de la branche courante
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
+	#* On récupère le numéro du ticket avec le # en plus
+	local ticket=$(echo $branch | grep '#.*' -o)
+	echo $ticket
 	#* On récupère le nombre d'arguments de la fonction
 	local argTotal=$#
 	#* La liste des arguments
