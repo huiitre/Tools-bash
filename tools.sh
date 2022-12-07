@@ -212,6 +212,7 @@ commit () {
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
 	#* On récupère le numéro du ticket avec le # en plus
 	local ticket=$(echo $branch | grep '#.*' -o)
+	#* Si le numéro de ticket n'existe pas, on met le nom de la branche à la place
 	if [ -z $ticket ]
 	then
 		ticket=$branch
