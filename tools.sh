@@ -212,6 +212,10 @@ commit () {
 	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
 	#* On récupère le numéro du ticket avec le # en plus
 	local ticket=$(echo $branch | grep '#.*' -o)
+	if [ -z $ticket ]
+	then
+		ticket=$branch
+	fi
 	#* On récupère le nombre d'arguments de la fonction
 	local argTotal=$#
 	#* La liste des arguments
