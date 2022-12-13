@@ -317,7 +317,7 @@ run () {
 				cordova run android
 			# * le pda demandé n'existe pas dans le dossier
 			else
-				echo '1#########################################'
+				echo '#########################################'
 				echo '                                         '
 				echo "    LE PDA << $opt >> N'EXISTE PAS      "
 				echo '                                         '
@@ -337,9 +337,14 @@ run () {
 				printf $BIPurple"PDA : $name$opt$Color_Off"
 				ret=$CURRENT_PATH"run_$name.bat"
 				$ret
+			# * On lance cordova run android sans target
+			elif [ $name -eq "1" ]
+			then
+				adb devices
+				cordova run android
 			# * le pda demandé n'existe pas dans le dossier
 			else
-				echo '2#########################################'
+				echo '#########################################'
 				echo '                                         '
 				echo "    LE PDA << $name >> N'EXISTE PAS      "
 				echo '                                         '
