@@ -288,9 +288,10 @@ runperso () {
 # todo V2 que j'utilise avec distrilog
 run () {
 	local pwd=$(pwd)
-	local CURRENT_PATH=$pwd"/pda/"
+	local RACINE_PATH=$pwd"/pda/"
+	local RACINE_PATH="/c/dev/pda/"
 
-	printf $BIBlue"CURRENT_PATH : $CURRENT_PATH$Color_Off\n"
+	printf $BIBlue"CURRENT_PATH : $RACINE_PATH$Color_Off\n"
 
 	string=$(adb devices)
 	opt=$1
@@ -302,13 +303,13 @@ run () {
 		if [ ! -z $opt ]
 		then
 			# * est-ce que le pda demandé existe dans le dossier /pda ?
-			if [ -e $CURRENT_PATH"run_$opt.bat" ]
+			if [ -e $RACINE_PATH"run_$opt.bat" ]
 			then
 				echo '##################################'
 				echo "||    LANCEMENT DU BUILD ...    ||"
 				echo '##################################'
 				printf $BIPurple"PDA : $opt$Color_Off"
-				ret=$CURRENT_PATH"run_$name.bat"
+				ret=$RACINE_PATH"run_$name.bat"
 				$ret
 			# * On lance cordova run android sans target
 			elif [ $opt -eq "1" ]
@@ -329,13 +330,13 @@ run () {
 			read -p "Veuillez cibler le PDA [defaut : eda52]: " name
 			name=${name:-eda52}
 			# * est-ce que le pda demandé existe dans le dossier /pda ?
-			if [ -e $CURRENT_PATH"run_$name.bat" ]
+			if [ -e $RACINE_PATH"run_$name.bat" ]
 			then
 				echo '##################################'
 				echo "||    LANCEMENT DU BUILD ...    ||"
 				echo '##################################'
 				printf $BIPurple"PDA : $name$opt$Color_Off"
-				ret=$CURRENT_PATH"run_$name.bat"
+				ret=$RACINE_PATH"run_$name.bat"
 				$ret
 			# * On lance cordova run android sans target
 			elif [ $name -eq "1" ]
