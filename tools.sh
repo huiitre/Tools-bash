@@ -404,25 +404,21 @@ lol () {
 				array+=($pda)
 			done
 
-			read -p "Veuillez inscrire le nom du PDA à ajouter : " response
-			name=$response
+			read -rp "Veuillez inscrire le nom du PDA à ajouter : " name
 			# * On vérifie si le champ est vide ET si le pda existe pas déjà
 			while [ -z "$name" ] || [[ " ${array[*]} " =~ " ${name} " ]]
 			do
 				echo ""
 				echo "Le nom du PDA est vide ou existe déjà !"
-				read -p "Veuillez inscrire le nom du PDA à ajouter : " response
-				name=$response
+				read -rp "Veuillez inscrire le nom du PDA à ajouter : " name
 			done
 
-			read -p "Veuillez inscrire le numéro du PDA à ajouter : " response
-			number=$response
+			read -rp "Veuillez inscrire le numéro du PDA à ajouter : " number
 			while [ -z "$number" ]
 			do
 				echo ""
 				echo "Le numéro du PDA << $name >> est vide !"
-				read -p "Veuillez inscrire le numéro du PDA << $name >> à ajouter : " response
-				number=$response
+				read -rp "Veuillez inscrire le numéro du PDA << $name >> à ajouter : " number
 			done
 			
 			#* on replace le contenu avec en plus le nouveau pda
@@ -497,30 +493,17 @@ lol () {
 			done
 			
 			# * on supprime le pda du tableau
-			echo 'key avant : '${!array[@]}
-			echo 'val avant : '${array[@]}
 			unset array[$name]
-			# echo 'key apres : '${!array[@]}
-			# echo 'val apres : '${array[@]}
 
-			# * on replace dans le fichier le reste des pda
+			# * on supprime le fichier
+			rm -f data.txt
+
+			# * on recrée le fichier avec le contenu à l'intérieur
+			touch data.txt
+
 			for key in ${!array[@]}
 			do
-				# todo récupérer le contenu du fichier puis insérer la ligne courant
-				# todo puis faire ça pour chaque ligne afin de ne pas écraser à chaque fois
-				# echo -e "$key"="${array[$key]}\n" > data.txt
-				# * on récupère le contenu courant du fichier
-				# echo 'key apres : '${!array[@]}
-				# echo 'val apres : '${array[@]}
-				content=$(cat data.txt)
-				# echo -e "key : $key"
-				# echo -e "value : ${array[$key]}"
-				echo -e $key="${array[$key]}\n" > data.txt
-				echo $content
-				# echo -e $content > data.txt
-				# echo -e "contenu fin de boucle : $content\n"
-
-				# echo -e "$content\n" > data.txt
+				echo "$key=${array[$key]}" >> data.txt
 			done
 
 			# * On récupère tous les PDA et on les range dans un tableau associatif
