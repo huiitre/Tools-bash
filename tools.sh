@@ -246,6 +246,29 @@ commit () {
 #!||                                          #!||
 #!###############################################!
 
+#todo Fonction qui retourne la liste des numéros de série des pda quand on fait adb devices
+getDevices() {
+  # Exécute la commande "adb devices" et stocke le résultat dans une variable
+  devices=$(adb devices)
+
+  # Vérifie si la chaîne "List of devices attached" se trouve dans le résultat
+  if [[ "$devices" == *"List of devices attached"* ]]; then
+    # Si la chaîne est présente, on peut extraire la liste des numéros de série à l'aide de la commande awk
+    devices=$(echo "$devices" | awk '{if (NR!=1) print $1}')
+    # Si la liste est vide, cela signifie qu'aucun périphérique n'est connecté
+    if [[ -z "$devices" ]]; then
+      echo "false"
+    else
+      # Sinon, on retourne la liste sous forme de tableau
+      echo "$devices"
+    fi
+  else
+    # Si la chaîne n'est pas présente, cela signifie qu'il y a eu une erreur lors de l'exécution de la commande "adb devices"
+    # On retourne la valeur "false"
+    echo "false"
+  fi
+}
+
 #todo Test d'extraction d'une BDD d'un PDA
 ext() {
 	adb shell run-as net.distrilog.easymobile sh -c "/ > /data/data/net.distrilog.easymobile/app_webview/Default/databases/file__0/1"
