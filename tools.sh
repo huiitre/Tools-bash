@@ -329,8 +329,15 @@ run () {
 		# * est-ce qu'une option a été écrite après la fonction ? "funcName blabla"
 		if [ ! -z $opt ]
 		then
+			echo 'il y a une option'
 			# * est-ce que le pda demandé existe dans le dossier /pda ?
-			if [ -e $RACINE_PATH"run_$opt.bat" ]
+			if [ $opt = "all" ]
+			then
+				echo 'dans le if'
+				adb devices
+				cordova run android
+			# * On lance cordova run android sans target
+			elif [ -e $RACINE_PATH"run_$opt.bat" ]
 			then
 				echo '##################################'
 				echo "||    LANCEMENT DU BUILD ...    ||"
@@ -338,11 +345,6 @@ run () {
 				printf $BIPurple"PDA : $opt$Color_Off"
 				ret=$RACINE_PATH"run_$name.bat"
 				$ret
-			# * On lance cordova run android sans target
-			elif [ $opt -eq "1" ]
-			then
-				adb devices
-				cordova run android
 			# * le pda demandé n'existe pas dans le dossier
 			else
 				echo '#########################################'
@@ -357,7 +359,12 @@ run () {
 			read -p "Veuillez cibler le PDA [defaut : eda52]: " name
 			name=${name:-eda52}
 			# * est-ce que le pda demandé existe dans le dossier /pda ?
-			if [ -e $RACINE_PATH"run_$name.bat" ]
+			if [ $name = "all" ]
+			then
+				adb devices
+				cordova run android
+			# * On lance cordova run android sans target
+			elif [ -e $RACINE_PATH"run_$name.bat" ]
 			then
 				echo '##################################'
 				echo "||    LANCEMENT DU BUILD ...    ||"
@@ -365,11 +372,6 @@ run () {
 				printf $BIPurple"PDA : $name$opt$Color_Off"
 				ret=$RACINE_PATH"run_$name.bat"
 				$ret
-			# * On lance cordova run android sans target
-			elif [ $name -eq "1" ]
-			then
-				adb devices
-				cordova run android
 			# * le pda demandé n'existe pas dans le dossier
 			else
 				echo '#########################################'
