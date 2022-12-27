@@ -333,9 +333,17 @@ run () {
 			# * est-ce que le pda demandé existe dans le dossier /pda ?
 			if [ $opt = "all" ]
 			then
-				echo 'dans le if'
-				adb devices
-				cordova run android
+				# Récupération de la liste des ID de smartphones connectés
+				device_ids=$(getDevices)
+
+				echo $device_ids
+
+				# Pour chaque ID de smartphone dans la liste
+				for device_id in $device_ids
+				do
+					# Exécution de l'application Cordova sur le smartphone avec l'ID spécifié
+					cordova run android --target=$device_id
+				done
 			# * On lance cordova run android sans target
 			elif [ -e $RACINE_PATH"run_$opt.bat" ]
 			then
@@ -361,8 +369,17 @@ run () {
 			# * est-ce que le pda demandé existe dans le dossier /pda ?
 			if [ $name = "all" ]
 			then
-				adb devices
-				cordova run android
+				# Récupération de la liste des ID de smartphones connectés
+				device_ids=$(getDevices)
+
+				echo $device_ids
+
+				# Pour chaque ID de smartphone dans la liste
+				for device_id in $device_ids
+				do
+					# Exécution de l'application Cordova sur le smartphone avec l'ID spécifié
+					cordova run android --target=$device_id
+				done
 			# * On lance cordova run android sans target
 			elif [ -e $RACINE_PATH"run_$name.bat" ]
 			then
