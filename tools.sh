@@ -236,8 +236,9 @@ commit() {
     ticket=$branch
   fi
 
-  # Récupérer le message de commit et échappe les apostrophes
-  local message="$ticket : $(echo $* | sed "s/\'/\\\\\'/g")"
+  # Récupérer le message de commit 
+  local message=$(printf "%s : %q" "$ticket" "$*")
+
   # Si il y a au moins un argument
   if [[ $# -gt 0 ]]; then
     printf "Commit sur $branch\n"
@@ -247,6 +248,7 @@ commit() {
     printf "Le message de commit est vide !"
   fi
 }
+
 
 #!###############################################!
 #!||                                          #!||
