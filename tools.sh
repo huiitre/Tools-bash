@@ -237,8 +237,7 @@ commit() {
   fi
 
   # Récupérer le message de commit et échappe les apostrophes
-  local message="$ticket : $(echo $* | sed "s/'/\\\\\'/g")"
-
+  local message="$ticket : $(echo $* | sed "s/\'/\\\\\'/g")"
   # Si il y a au moins un argument
   if [[ $# -gt 0 ]]; then
     printf "Commit sur $branch\n"
