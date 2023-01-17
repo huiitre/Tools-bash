@@ -227,17 +227,17 @@ gitreset () {
 commit() {
   # Récupérer le nom de la branche courante
   local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
-  
+
   # Récupérer le numéro de ticket avec le # en plus
   local ticket=$(echo $branch | grep '#.*' -o)
-  
+
   # Si le numéro de ticket n'existe pas, utiliser le nom de la branche à la place
   if [ -z "$ticket" ]; then
     ticket=$branch
   fi
-  
-  # Récupérer le message de commit
-  local message="$ticket : $*"
+
+  # Récupérer le message de commit et échappe les apostrophes
+  local message="$ticket : $(echo $* | sed "s/'/\\\\\'/g")"
 
   # Si il y a au moins un argument
   if [[ $# -gt 0 ]]; then
