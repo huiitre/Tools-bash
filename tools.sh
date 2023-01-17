@@ -192,16 +192,29 @@ create-app() {
 # todo penser à refaire en prenant compte des dossiers bug/, feature/, etc ...
 #* fonction qui permet de switch d'une branche à une autre
 #* évite de devoir taper les guillemets "" pour entourer le numéro de ticket
-checkout() {
-	attr=${1}
-	#* Si c'est égal à 5 && supérieur à zéro
-	if [ ${#attr} -eq 5 ] && [ "$attr" -ge 0 ]
-	then
-		cmd="git checkout #${attr}"
+check() {
+	# Stocker les noms de branches qui correspondent au nom spécifié
+	local branches
+	branches=$(git branch --list "*$1*" | awk '{print $1}')
+	
+	# Vérifier si des branches ont été trouvées
+	if [ -n "$branches" ]; then
+		# Compter le nombre de branches trouvées
+		local branch_count
+		branch_count=$(echo "$branches" | wc -l)
+		
+		# Si il n'y a qu'une branche, la sélectionner
+		if [ "$branch_count" -eq 1 ]; then
+			git checkout $(echo "$branches")
+		
+		# Sinon, afficher une liste des branches trouvées
+		else
+			echo "Plusieurs branches ont été trouvées:"
+			echo "$branches"
+		fi
 	else
-		cmd="git checkout ${attr}"
+		echo "Aucune branche trouvée avec le nom '$1'"
 	fi
-	$cmd
 }
 
 #todo RESET COMMIT (pour le dev de la fonction commit)
@@ -211,33 +224,29 @@ gitreset () {
 }
 
 #todo commit 
-commit () {
-	#* On récupère le nom de la branche courante
-	local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
-	#* On récupère le numéro du ticket avec le # en plus
-	local ticket=$(echo $branch | grep '#.*' -o)
-	#* Si le numéro de ticket n'existe pas, on met le nom de la branche à la place
-	if [ -z $ticket ]
-	then
-		ticket=$branch
-	fi
-	#* On récupère le nombre d'arguments de la fonction
-	local argTotal=$#
-	#* La liste des arguments
-	local argList=$@
-	#* On déclare le début de la commande
-	local cmd="git commit -m "
+commit() {
+  # Récupérer le nom de la branche courante
+  local branch=$(git symbolic-ref HEAD --short 2> /dev/null)
+  
+  # Récupérer le numéro de ticket avec le # en plus
+  local ticket=$(echo $branch | grep '#.*' -o)
+  
+  # Si le numéro de ticket n'existe pas, utiliser le nom de la branche à la place
+  if [ -z "$ticket" ]; then
+    ticket=$branch
+  fi
+  
+  # Récupérer le message de commit
+  local message="$ticket : $*"
 
-	#* Si il y a au moins un argument
-	if [[ $argTotal -gt 0 ]]
-	then
-		printf $BIPurple"Commit sur $On_Green $branch $Color_Off\n"
-		# printf $BIPurple"Message : $On_Green $argList $Color_Off\n"
-		printf $BIPurple"Message : $On_Green $argList $Color_Off\n\n"
-		$cmd"$ticket : $argList"
-	else
-		printf $BIRed"Le message de commit est vide !"$Color_Off
-	fi
+  # Si il y a au moins un argument
+  if [[ $# -gt 0 ]]; then
+    printf "Commit sur $branch\n"
+    printf "Message : $message\n\n"
+    git commit -m "$message"
+  else
+    printf "Le message de commit est vide !"
+  fi
 }
 
 #!###############################################!
@@ -245,6 +254,45 @@ commit () {
 #!||            CORDOVA & ANDROID             #!||
 #!||                                          #!||
 #!###############################################!
+
+#todo CHIRON BUILDER
+chiron() {
+	#? Le dossier de chiron
+  chironCordovaDir="/c/dev/cordova_chiron_builder"
+
+  #? Le dossier de chiron cordova
+  chironDir="/c/dev/chiron"
+
+	# On save le dossier courant afin d'y revenir plus tard
+	currentDir=$(pwd)
+
+	# On navigue vers chiron et on lance le build
+	cd $chironDir &&
+
+	# On lance le build
+	npm run build &&
+	echo "========== BUILD OK =========="
+
+  # # Si on a le chemin du dossier en paramètre, on le prend
+  # if [ -n "$1" ]; then
+  #   chironDir="$1"
+  # fi
+	# echo "PATH CHIRON : $chironDir"
+
+  # # Lance la compilation de chiron, la copie du build dans cordova et la compilation cordova
+  # echo "========= Compilation de CHIRON"
+  # cd "$chironDir"
+  # npm run build && \
+	
+	# echo "PATH PARENT : $parent"
+  # echo "========= Envoi vers mobile" && \
+	# echo "DOSSIER CHIRON CORDOVA : $parent"
+  # cp -r "$chironDir/dist" "$parent/www" && \
+  # cd "$parent" && \
+  # cp keystore/* platforms/android/app/ && \
+  # cp gradle.properties platforms/android/ && \
+  # cordova run android
+}
 
 #todo Fonction qui retourne la liste des numéros de série des pda quand on fait adb devices
 getDevices() {
