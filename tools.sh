@@ -365,7 +365,7 @@ runperso () {
 run () {
 	local pwd=$(pwd)
 	local RACINE_PATH=$pwd"/pda/"
-	local RACINE_PATH="/c/dev/pda/"
+	# local RACINE_PATH="/c/dev/pda/"
 
 	printf $BIBlue"CURRENT_PATH : $RACINE_PATH$Color_Off\n"
 
