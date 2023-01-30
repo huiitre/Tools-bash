@@ -241,8 +241,8 @@ commit() {
 
   # Si il y a au moins un argument
   if [[ $# -gt 0 ]]; then
-    printf "Commit sur $branch\n"
-    printf "Message : $message\n\n"
+    printf "${On_Green}${BWhite}Commit sur $branch\n${Color_Off}"
+    printf "${On_Green}${BWhite}Message : $message\n\n${Color_Off}"
     git commit -m "$message"
   else
     printf "Le message de commit est vide !"
