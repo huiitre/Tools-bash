@@ -237,7 +237,7 @@ commit() {
   fi
 
   # Récupérer le message de commit 
-  local message=$(printf "%s : %q" "$ticket" "$*")
+  local message=$(printf "%s : %s" "$ticket" "$*")
 
   # Si il y a au moins un argument
   if [[ $# -gt 0 ]]; then
