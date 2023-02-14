@@ -326,7 +326,7 @@ ext() {
 	# Besoin de root le pda
 }
 
-alias adbd='adb devices'
+alias adbd='adb devices -l'
 
 #todo /-----/ LOG JAVA /-----/
 logcat() {
@@ -349,9 +349,6 @@ cordorequi () {
 	cd '../'
 }
 
-# todo alias run to RUN
-alias RUN='run'
-
 # todo V1 RUN du pc perso
 runperso () {
 	adb devices;
@@ -361,8 +358,8 @@ runperso () {
 	cd '../'
 }
 
-# todo V2 que j'utilise avec distrilog
-run () {
+# todo V2 que j'utilise avec distrilog (obsolète)
+run_old () {
 	local pwd=$(pwd)
 	local RACINE_PATH=$pwd"/pda/"
 	local RACINE_PATH="/c/dev/pda/"
@@ -456,6 +453,76 @@ run () {
 		echo '#################################################'
 	fi
 }
+
+# todo variante de run qui utilise adb devices -l en checkant le modèle du pda renvoyé
+run() {
+	# * On récupère le résultat de la commande
+	local devices=$(adb devices -l)
+
+	# * pour l'export de la fonction, on déclare ici les variables de couleur
+	local Color_Off='\033[0m'
+	local BRed='\033[1;31m'
+	local BGreen='\033[1;32m'
+
+	# * si le résultat est vide
+	if [ "$(echo "$devices" | tr -d '\r\n')" = "List of devices attached" ]; then
+		adb devices -l
+		printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+		return 1
+	fi
+
+	# * si l'argument est vide
+	if [ -z "$1" ]; then
+		# * on récupère le pda demandé par l'user
+		read -p "Veuillez cibler le PDA [défaut : ct60]: " name
+		local name=${name:-ct60}
+		# * on récupère le modèle et on converti les caractères minuscule en majuscule
+		local model=$(echo "$name" | tr '[:lower:]' '[:upper:]')
+		local result=$(echo "$devices" | grep -iw "$model")
+
+		# * si le pda n'a pas été trouvé
+		if [ -z "$result" ]; then
+			printf $BRed"Erreur: $model non trouvé."$Color_Off
+			return 1
+		fi
+
+		# * si l'id du PDA n'a pas pu être récupéré
+		local device_id=$(echo "$result" | awk '{print $1}')
+		if [ -z "$device_id" ]; then
+			printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+			return 1
+		fi
+
+		printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
+		adb devices -l
+		cordova run android --target="$device_id"
+
+	# * l'argument n'est pas vide, on continue
+	else
+		# * on récupère le modèle et on converti les caractères minuscule en majuscule
+		local model=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+		local result=$(echo "$devices" | grep -iw "$model")
+
+		# * si le pda n'a pas été trouvé
+		if [ -z "$result" ]; then
+			printf $BRed"Erreur: $1 non trouvé."$Color_Off
+			return 1
+		fi
+
+		local device_id=$(echo "$result" | awk '{print $1}')
+		# * si l'id du PDA n'a pas pu être récupéré
+		if [ -z "$device_id" ]; then
+			printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+			return 1
+		fi
+
+		printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
+		adb devices -l
+		cordova run android --target="$device_id"
+	fi
+}
+# todo alias run to RUN
+alias RUN='run'
 
 # todo V3 de run() pour les run cordova android, en cours de developpement
 lol () {
