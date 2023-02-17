@@ -1,10 +1,14 @@
-#!###############################################!
-#!||                                          #!||
-#!||             Variables color              #!||
-#!||                                          #!||
-#!###############################################!
+#!######################################################!
+#!||                                                 #!||
+#!||             Variables color & style             #!||
+#!||                                                 #!||
+#!######################################################!
 # Reset
-Color_Off='\033[0m'       # Text Reset
+Color_Off='\033[0m'       # Color Reset
+Style_Off='\e[0m'
+
+# Italic Text
+Italic='\e[3m'
 
 # Regular Colors
 Black='\033[0;30m'        # Black
@@ -459,66 +463,136 @@ run() {
 	# * On récupère le résultat de la commande
 	local devices=$(adb devices -l)
 
+	# * chemin absolu du fichier de config
+	local CONFIG_FILE="/c/run-pda-config.cfg"
+
 	# * pour l'export de la fonction, on déclare ici les variables de couleur
 	local Color_Off='\033[0m'
+	local Style_Off='\e[0m'
 	local BRed='\033[1;31m'
 	local BGreen='\033[1;32m'
+	local Italic='\e[3m'
 
-	# * si le résultat est vide
-	if [ "$(echo "$devices" | tr -d '\r\n')" = "List of devices attached" ]; then
-		adb devices -l
-		printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
-		return 1
-	fi
+	# * on lance checkConfigFile afin de créer le fichier de config
+	checkConfigFile
+	# * on récupère la valeur par défaut
+	local DEFAULT_PDA=$(grep "^DEFAULT_PDA=" "$CONFIG_FILE" | cut -d= -f2)
 
-	# * si l'argument est vide
-	if [ -z "$1" ]; then
-		# * on récupère le pda demandé par l'user
-		read -p "Veuillez cibler le PDA [défaut : ct60]: " name
-		local name=${name:-ct60}
-		# * on récupère le modèle et on converti les caractères minuscule en majuscule
-		local model=$(echo "$name" | tr '[:lower:]' '[:upper:]')
-		local result=$(echo "$devices" | grep -iw "$model")
-
-		# * si le pda n'a pas été trouvé
-		if [ -z "$result" ]; then
-			printf $BRed"Erreur: $model non trouvé."$Color_Off
-			return 1
+	checkConfigFile() {
+		if [ -f "$CONFIG_FILE" ]; then
+			return 0
+		else
+			# echo "Création du fichier de configuration $CONFIG_FILE ..."
+			touch "$CONFIG_FILE"
+			if [ $? -eq 0 ]; then
+				# * liste des configurations par défaut
+				echo "DEFAULT_PDA=ct60" >> "$CONFIG_FILE"
+				return 0
+			else
+				# echo "Erreur : impossible de créer le fichier de configuration."
+				return 1
+			fi
 		fi
+	}
 
-		# * si l'id du PDA n'a pas pu être récupéré
-		local device_id=$(echo "$result" | awk '{print $1}')
-		if [ -z "$device_id" ]; then
+	runPda() {
+		# * si le résultat est vide
+		if [ "$(echo "$devices" | tr -d '\r\n')" = "List of devices attached" ]; then
+			adb devices -l
 			printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
 			return 1
 		fi
 
-		printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
-		adb devices -l
-		cordova run android --target="$device_id"
+		# * si l'argument est vide
+		if [ -z "$1" ]; then
+			# * on récupère le pda demandé par l'user
+			read -p "Veuillez cibler le PDA [défaut : $DEFAULT_PDA]: " name
+			local name=${name:-$DEFAULT_PDA}
+			# * on récupère le modèle et on converti les caractères minuscule en majuscule
+			local model=$(echo "$name" | tr '[:lower:]' '[:upper:]')
+			local result=$(echo "$devices" | grep -iw "$model")
 
-	# * l'argument n'est pas vide, on continue
+			# * si le pda n'a pas été trouvé
+			if [ -z "$result" ]; then
+				printf $BRed"Erreur: $model non trouvé."$Color_Off
+				return 1
+			fi
+
+			# * si l'id du PDA n'a pas pu être récupéré
+			local device_id=$(echo "$result" | awk '{print $1}')
+			if [ -z "$device_id" ]; then
+				printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+				return 1
+			fi
+
+			printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
+			adb devices -l
+			cordova run android --target="$device_id"
+
+		# * l'argument n'est pas vide, on continue
+		else
+			# * on récupère le modèle et on converti les caractères minuscule en majuscule
+			local model=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+			local result=$(echo "$devices" | grep -iw "$model")
+
+			# * si le pda n'a pas été trouvé
+			if [ -z "$result" ]; then
+				printf $BRed"Erreur: $1 non trouvé."$Color_Off
+				return 1
+			fi
+
+			local device_id=$(echo "$result" | awk '{print $1}')
+			# * si l'id du PDA n'a pas pu être récupéré
+			if [ -z "$device_id" ]; then
+				printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+				return 1
+			fi
+
+			printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
+			adb devices -l
+			cordova run android --target="$device_id"
+		fi
+	}
+
+	displayHelp() {
+		echo "Liste des commandes disponibles : "
+		echo -e $Italic"Note : Marche également avec deux tirets << -- >>."$Style_Off
+		echo ""
+		printf "%-50s %s\n" "Option" "Commande"
+		echo ""
+		printf "%-50s %s\n" "-h | -H | -help    | -HELP" "Affiche l'aide"
+		printf "%-50s %s\n" "-l | -L | -list    | -LIST" "Affiche la liste des PDA"
+		printf "%-50s %s\n" "-v | -V | -version | -VERSION" "Version actuelle du script"
+	}
+
+	displayDefault() {
+		checkConfigFile
+		# * on check si le fichier existe ou si il a pu être créé
+		if [ $? -eq 0 ]; then
+			printf "$BIBlue========== Configuration du PDA par défaut ==========$Color_Off\n"
+			printf $Italic$IPurple"PDA actuel par défaut : $BIWhite$DEFAULT_PDA\n\n"$Color_Off
+			read -p "Veuillez inscrire le nom du PDA à build par défaut : " response
+			pda=$response
+			if [ ! -z "$pda" ]; then
+				sed -i "s/DEFAULT_PDA=.*/DEFAULT_PDA=$pda/g" "$CONFIG_FILE"
+				echo -e $BIGreen"Le PDA par défaut a été modifié de $BIRed$DEFAULT_PDA $BIGreenà $BICyan$pda ${BIGreen}avec success !"$Color_Off
+			else
+				echo -e $BIRed"ERREUR : Le champ renseigné est vide !"$Color_Off
+			fi
+		else
+			echo -e $BIRed"ERROR : Le fichier est introuvable ou n'a pas pu être créé"$Color_Off
+		fi
+	}
+
+	# * Liste des commandes disponibles
+	if echo "$1" | grep -qiE '^-{1,2}h(elp)?$'; then
+		displayHelp
+	elif echo "$1" | grep -qiE '^-{1,2}d(efault)?$'; then
+		displayDefault
+	elif echo "$1" | grep -qiE '^--?.*'; then
+		echo "commande inconnue"
 	else
-		# * on récupère le modèle et on converti les caractères minuscule en majuscule
-		local model=$(echo "$1" | tr '[:lower:]' '[:upper:]')
-		local result=$(echo "$devices" | grep -iw "$model")
-
-		# * si le pda n'a pas été trouvé
-		if [ -z "$result" ]; then
-			printf $BRed"Erreur: $1 non trouvé."$Color_Off
-			return 1
-		fi
-
-		local device_id=$(echo "$result" | awk '{print $1}')
-		# * si l'id du PDA n'a pas pu être récupéré
-		if [ -z "$device_id" ]; then
-			printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
-			return 1
-		fi
-
-		printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
-		adb devices -l
-		cordova run android --target="$device_id"
+		runPda $1
 	fi
 }
 # todo alias run to RUN
