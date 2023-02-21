@@ -196,7 +196,7 @@ create-app() {
 # todo penser à refaire en prenant compte des dossiers bug/, feature/, etc ...
 #* fonction qui permet de switch d'une branche à une autre
 #* évite de devoir taper les guillemets "" pour entourer le numéro de ticket
-check() {
+checkout() {
 	# Stocker les noms de branches qui correspondent au nom spécifié
 	local branches
 	branches=$(git branch --list "*$1*" | awk '{print $1}')
@@ -473,8 +473,6 @@ run() {
 	local BGreen='\033[1;32m'
 	local Italic='\e[3m'
 
-	# * on lance checkConfigFile afin de créer le fichier de config
-	checkConfigFile
 	# * on récupère la valeur par défaut
 	local DEFAULT_PDA=$(grep "^DEFAULT_PDA=" "$CONFIG_FILE" | cut -d= -f2)
 
@@ -555,11 +553,13 @@ run() {
 	}
 
 	displayHelp() {
-		echo "Liste des commandes disponibles : "
+		echo -e $BIBlue"==========================================="$Color_Off
+		echo -e $BIBlue"Liste des commandes disponibles : $Color_Off"
+		echo -e $BIBlue"==========================================="$Color_Off
 		echo -e $Italic"Note : Marche également avec deux tirets << -- >>."$Style_Off
 		echo ""
-		printf "%-50s %s\n" "Option" "Commande"
-		echo ""
+		printf $BIBlue"%-50s %s" "Commande :" "Description :"
+		echo -e $Color_Off
 		printf "%-50s %s\n" "-h | -H | -help    | -HELP" "Affiche l'aide"
 		printf "%-50s %s\n" "-l | -L | -list    | -LIST" "Affiche la liste des PDA"
 		printf "%-50s %s\n" "-v | -V | -version | -VERSION" "Version actuelle du script"
@@ -584,11 +584,68 @@ run() {
 		fi
 	}
 
+	displayVersion() {
+		echo -e $BIPurple
+		echo -e "##################################################"
+		echo -e "||                   RUN PDA                    ||"
+		echo -e "||                 Version 1.0                  ||"
+		echo -e "||                    by YDL                    ||"
+		echo -e "##################################################"$Color_Off
+		echo ""
+
+		# * VERSIONING
+		declare -A versions
+
+		# * VERSION 1.0
+		version='1.0'
+		printf -v versions["$version"] '%s\n' \
+			"20-02-2023 : Ajout de la fonction de versioning" \
+			"21-02-2023 : Ajout de la fonction de debug"
+
+		# * VERSION 1.1
+		version="1.1"
+		printf -v versions["$version"] '%s\n' \
+			"24-02-2023 : Correction de bugs mineurs" \
+			"28-02-2023 : Amélioration de l'interface utilisateur"
+
+		# * VERSION 1.2
+		version="1.2"
+		printf -v versions["$version"] '%s\n' \
+			"29-02-2023 : Ajout de la fonction de login" \
+			"29-02-2023 : Ajout de la fonction de logout" \
+			"30-02-2023 : Ajout de la fonction de création de compte"
+
+		# * Affichage du versioning
+		echo ""
+		echo -e "Version\t\tDate\t\t\tDescription"
+		# printf "%-15s %-22s %s\n" "Version" "Date" "Description"
+		echo -e '---------------------------------------------------'
+
+		for version in "${!versions[@]}"; do
+			first_modification=true
+			for modification in "${versions[$version]}"; do
+				if [ "$first_modification" = true ]; then
+					printf "%-15s %-22s %s\n" "$version" "$modification"
+					first_modification=false
+				else
+					printf "%-15s %-22s %s\n" "" "$(echo "$modification" | sed 's/^/                  /')"
+				fi
+			done
+		done
+	}
+
+	# * on lance checkConfigFile afin de créer le fichier de config
+	checkConfigFile
+
 	# * Liste des commandes disponibles
 	if echo "$1" | grep -qiE '^-{1,2}h(elp)?$'; then
 		displayHelp
 	elif echo "$1" | grep -qiE '^-{1,2}d(efault)?$'; then
 		displayDefault
+	elif echo "$1" | grep -qiE '^-{1,2}l(ist)?$'; then
+		echo "LISTE EN COURS DE DEV"
+	elif echo "$1" | grep -qiE '^-{1,2}v(ersion)?$'; then
+		displayVersion
 	elif echo "$1" | grep -qiE '^--?.*'; then
 		echo "commande inconnue"
 	else
