@@ -643,7 +643,7 @@ run() {
 	elif echo "$1" | grep -qiE '^-{1,2}d(efault)?$'; then
 		displayDefault
 	elif echo "$1" | grep -qiE '^-{1,2}l(ist)?$'; then
-		echo "LISTE EN COURS DE DEV"
+		echo "LISTE EN COURS DE DEVELOPPEMENT"
 	elif echo "$1" | grep -qiE '^-{1,2}v(ersion)?$'; then
 		displayVersion
 	elif echo "$1" | grep -qiE '^--?.*'; then
