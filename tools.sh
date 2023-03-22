@@ -334,7 +334,73 @@ alias adbd='adb devices -l'
 
 #todo /-----/ LOG JAVA /-----/
 logcat() {
-	adb logcat -c;
+	# # liste des pda
+	# local devices=$(adb devices -l)
+
+	# # PDA par défaut
+	# local DEFAULT_PDA="CT60"
+
+	# # si le résultat est vide
+	# if [ "$(echo "$devices" | tr -d '\r\n')" = "List of devices attached" ]; then
+	# 	adb devices -l
+	# 	printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+	# 	return 1
+	# fi
+
+	# # * si l'argument est vide
+	# if [ -z "$1" ]; then
+	# 	# * on récupère le pda demandé par l'user
+	# 	read -p "Veuillez cibler le PDA [défaut : $DEFAULT_PDA]: " name
+	# 	local name=${name:-$DEFAULT_PDA}
+	# 	# * on récupère le modèle et on converti les caractères minuscule en majuscule
+	# 	local model=$(echo "$name" | tr '[:lower:]' '[:upper:]')
+	# 	local result=$(echo "$devices" | grep -iw "$model")
+
+	# 	# * si le pda n'a pas été trouvé
+	# 	if [ -z "$result" ]; then
+	# 		printf $BRed"Erreur: $model non trouvé."$Color_Off
+	# 		return 1
+	# 	fi
+
+	# 	# * si l'id du PDA n'a pas pu être récupéré
+	# 	local device_id=$(echo "$result" | awk '{print $1}')
+	# 	if [ -z "$device_id" ]; then
+	# 		printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+	# 		return 1
+	# 	fi
+
+	# 	printf "${BGreen}Début du debug JAVA${Color_Off}\n"
+	# 	cordova run android --target="$device_id"
+
+	# # * l'argument n'est pas vide, on continue
+	# else
+	# 	# * on récupère le modèle et on converti les caractères minuscule en majuscule
+	# 	local model=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+	# 	local result=$(echo "$devices" | grep -iw "$model")
+
+	# 	# * si le pda n'a pas été trouvé
+	# 	if [ -z "$result" ]; then
+	# 		printf $BRed"Erreur: $1 non trouvé."$Color_Off
+	# 		return 1
+	# 	fi
+
+	# 	local device_id=$(echo "$result" | awk '{print $1}')
+	# 	# * si l'id du PDA n'a pas pu être récupéré
+	# 	if [ -z "$device_id" ]; then
+	# 		printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+	# 		return 1
+	# 	fi
+
+	# 	printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
+	# 	adb devices -l
+	# 	cordova run android --target="$device_id"
+	# 	adb logcat -c
+	# 	adb logcat 
+	# fi
+
+	# on clear le terminal
+	adb logcat -c
+	# on exécute la commande
 	adb logcat -s ${1-easymobile_tools}
 }
 
