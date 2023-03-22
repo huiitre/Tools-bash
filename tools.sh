@@ -480,15 +480,13 @@ run() {
 		if [ -f "$CONFIG_FILE" ]; then
 			return 0
 		else
-			# echo "Création du fichier de configuration $CONFIG_FILE ..."
-			touch "$CONFIG_FILE"
-			if [ $? -eq 0 ]; then
-				# * liste des configurations par défaut
+			# on check si le path est accessible en écriture
+			if ! touch "$CONFIG_FILE" 2>&1; then
+				printf $BRed"Erreur : Le chemin $CONFIG_FILE n'est pas accessible en écriture, veuillez modifier la variable CONFIG_FILE au début de la fonction !"$Color_Off
+				return 1
+			else
 				echo "DEFAULT_PDA=ct60" >> "$CONFIG_FILE"
 				return 0
-			else
-				# echo "Erreur : impossible de créer le fichier de configuration."
-				return 1
 			fi
 		fi
 	}
@@ -566,7 +564,7 @@ run() {
 	}
 
 	displayDefault() {
-		checkConfigFile
+		# checkConfigFile
 		# * on check si le fichier existe ou si il a pu être créé
 		if [ $? -eq 0 ]; then
 			printf "$BIBlue========== Configuration du PDA par défaut ==========$Color_Off\n"
@@ -592,6 +590,7 @@ run() {
 		echo -e "||                    by YDL                    ||"
 		echo -e "##################################################"$Color_Off
 		echo ""
+		echo "CE QUI VA SUIVRE EST EN COURS DE DEVELOPPEMENT"
 
 		# * VERSIONING
 		declare -A versions
@@ -635,7 +634,14 @@ run() {
 	}
 
 	# * on lance checkConfigFile afin de créer le fichier de config
-	checkConfigFile
+	local check_config_resul
+	check_config_result=$(checkConfigFile)
+	if [ $(expr "$check_config_result" : '^[0-9]*$') -eq 1 ] && [ "$check_config_result" -eq 1 ]; then
+    return 1
+	else
+			checkConfigFile
+	fi
+	
 
 	# * Liste des commandes disponibles
 	if echo "$1" | grep -qiE '^-{1,2}h(elp)?$'; then
