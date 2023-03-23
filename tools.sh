@@ -540,20 +540,27 @@ run() {
 	local Italic='\e[3m'
 
 	# * on récupère la valeur par défaut
-	local DEFAULT_PDA=$(grep "^DEFAULT_PDA=" "$CONFIG_FILE" | cut -d= -f2)
+	local DEFAULT_PDA='CT60'
+	# $(grep "^DEFAULT_PDA=" "$CONFIG_FILE" | cut -d= -f2)
+
+	# * variable qui gère le mode défaut
+	local defaultMode=true
 
 	checkConfigFile() {
+		# * est-ce que le fichier existe
 		if [ -f "$CONFIG_FILE" ]; then
-			return 0
-		else
-			# on check si le path est accessible en écriture
-			if ! touch "$CONFIG_FILE" 2>&1; then
-				printf $BRed"Erreur : Le chemin $CONFIG_FILE n'est pas accessible en écriture, veuillez modifier la variable CONFIG_FILE au début de la fonction !"$Color_Off
-				return 1
-			else
-				echo "DEFAULT_PDA=ct60" >> "$CONFIG_FILE"
-				return 0
+			# * on récupère le pda par défaut si il existe
+			local pda=$(grep "^DEFAULT_PDA=" "$CONFIG_FILE" | cut -d= -f2)
+			if [ -n "$pda" ]; then
+				DEFAULT_PDA="$pda"
 			fi
+		else
+			touch "$CONFIG_FILE" 2> /dev/null
+			if [ $? -ne 0 ]; then
+				defaultMode=false
+				return 1
+			fi
+			echo "DEFAULT_PDA=ct60" >> "$CONFIG_FILE"
 		fi
 	}
 
@@ -700,20 +707,19 @@ run() {
 	}
 
 	# * on lance checkConfigFile afin de créer le fichier de config
-	local check_config_resul
-	check_config_result=$(checkConfigFile)
-	if [ $(expr "$check_config_result" : '^[0-9]*$') -eq 1 ] && [ "$check_config_result" -eq 1 ]; then
-    return 1
-	else
-			checkConfigFile
-	fi
+	checkConfigFile
 	
 
 	# * Liste des commandes disponibles
 	if echo "$1" | grep -qiE '^-{1,2}h(elp)?$'; then
 		displayHelp
 	elif echo "$1" | grep -qiE '^-{1,2}d(efault)?$'; then
-		displayDefault
+		if [ defaultMode = true ]; then
+			displayDefault
+		else
+			echo -e $BRed"La déclaration d'un PDA par défaut est désactivée car vous n'avez pas les droits d'écriture sur $CONFIG_FILE, vous ne pouvez pas utiliser cette commande."$Color_Off
+			echo -e $BRed"Pour activer la fonctionnalité, veuillez modifier la variable CONFIG_FILE en lui spécifiant un chemin correct et accessible en lecture et écriture."$Color_Off
+		fi
 	elif echo "$1" | grep -qiE '^-{1,2}l(ist)?$'; then
 		echo "LISTE EN COURS DE DEVELOPPEMENT"
 	elif echo "$1" | grep -qiE '^-{1,2}v(ersion)?$'; then
