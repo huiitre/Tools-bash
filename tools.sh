@@ -714,8 +714,7 @@ run() {
 	if echo "$1" | grep -qiE '^-{1,2}h(elp)?$'; then
 		displayHelp
 	elif echo "$1" | grep -qiE '^-{1,2}d(efault)?$'; then
-		echo "defaultmode : "$defaultMode
-		if [ defaultMode = true ]; then
+		if [ $defaultMode = true ]; then
 			displayDefault
 		else
 			echo -e $BRed"La déclaration d'un PDA par défaut est désactivée car vous n'avez pas les droits d'écriture sur $CONFIG_FILE, vous ne pouvez pas utiliser cette commande."$Color_Off
