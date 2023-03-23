@@ -714,6 +714,7 @@ run() {
 	if echo "$1" | grep -qiE '^-{1,2}h(elp)?$'; then
 		displayHelp
 	elif echo "$1" | grep -qiE '^-{1,2}d(efault)?$'; then
+		echo "defaultmode : "$defaultMode
 		if [ defaultMode = true ]; then
 			displayDefault
 		else
