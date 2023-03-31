@@ -16,10 +16,6 @@ do
 	fi
 done
 
-#todo Chemin absolu du fichier tools.sh (normalement le repo dans /c/)
-TOOLS_PATH=$(dirname "$(readlink -f "$BASH_SOURCE")")
-# echo "chemin tools.sh : $TOOLS_PATH"
-
 #todo escape les simple quote (pas utilisé car bizarre)
 escapeQuote () {
 	local quoted=${1//\'/\'\\\'\'};

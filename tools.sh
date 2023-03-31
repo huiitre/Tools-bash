@@ -16,7 +16,7 @@ FILE_PATH="$( cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 ; pwd -P )"
 # * chemin absolu du répertoire "src"
 SRC_DIR=$FILE_PATH"/src"
 
-
+# * on importe utils avant les autres
 if [ -e "$SRC_DIR/utils/utils.sh" ]; then
 	source "$SRC_DIR/utils/utils.sh"
 fi
