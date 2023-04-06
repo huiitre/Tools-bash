@@ -443,6 +443,93 @@ run() {
 		fi
 	}
 
+	displayUninstall() {
+		pda=$1
+		# * est-ce qu'on a des pda de branchés
+		if [ "$(echo "$devices" | tr -d '\r\n')" = "List of devices attached" ]; then
+			adb devices -l
+			printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+			return 1
+		fi
+
+		# * pas d'arguments
+		if [ -z "$pda" ]; then
+			# * on récupère le pda demandé par l'user
+			read -p "Veuillez cibler le PDA à désinstaller [défaut : $DEFAULT_PDA]: " name
+			local name=${name:-$DEFAULT_PDA}
+
+			# * on récupère le modèle et on converti les caractères minuscule en majuscule
+			local model=$(echo "$name" | tr '[:lower:]' '[:upper:]')
+			local result=$(echo "$devices" | grep -iw "$model")
+
+			# * si le pda n'a pas été trouvé
+			if [ -z "$result" ]; then
+				printf $BRed"Erreur: $model non trouvé."$Color_Off
+				return 1
+			fi
+
+			# * si l'id du PDA n'a pas pu être récupéré
+			local device_id=$(echo "$result" | awk '{print $1}')
+			if [ -z "$device_id" ]; then
+				printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+				return 1
+			fi
+
+			# * est-ce que l'app est installé sur le pda
+			if [ $(checkAppInstalled $device_id) = 'false' ]; then
+				printf "EasyMobile n'est pas installé sur le PDA $model"
+				return 1
+			fi
+
+			printf "${BBlue}Désinstallation de EasyMobile sur le pda $model en cours ...${Color_Off}\n"
+			result=$(adb -s $device_id uninstall net.distrilog.easymobile)
+			
+			if [ $result = 'Success' ]; then
+				printf "${BGreen}L'application a bien été clear !${Color_Off}\n"
+				printf "${BBlue}Lancement de l'application ...${Color_Off}\n"
+				adb -s $device_id shell am start -n net.distrilog.easymobile/.MainActivity > /dev/null 2>&1
+				printf "${BGreen}L'application a bien été lancé !${Color_Off}\n"
+			else
+				printf $BRed"Erreur lors du clear de l'application."$Color_Off
+				return 1
+			fi
+
+		# * sinon, si on a un argument
+		else
+			local model=$(echo "$pda" | tr '[:lower:]' '[:upper:]')
+			local result=$(echo "$devices" | grep -iw "$model")
+
+			# * si le pda demandé n'a pas été trouvé
+			if [ -z "$result" ]; then
+				printf $BRed"Erreur: $pda non trouvé."$Color_Off
+				return 1
+			fi
+
+			local device_id=$(echo "$result" | awk '{print $1}')
+			# * si l'id du pda n'a pas été trouvé
+			if [ -z "$device_id" ]; then
+				printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+				return 1
+			fi
+
+			# * est-ce que l'app est installé sur le pda
+			if [ $(checkAppInstalled $device_id) = 'false' ]; then
+				printf "EasyMobile n'est pas installé sur le PDA $model"
+				return 1
+			fi
+
+			printf "${BBlue}Désinstallation de EasyMobile sur le pda $model en cours ...${Color_Off}\n"
+			result=$(adb -s $device_id uninstall net.distrilog.easymobile)
+			
+			if [ $result = 'Success' ]; then
+				printf "${BGreen}L'application a bien été clear !${Color_Off}\n"
+			else
+				printf $BRed"Erreur lors du clear de l'application."$Color_Off
+				return 1
+			fi
+		fi
+	}
+
 	# * on lance checkConfigFile afin de créer le fichier de config
 	checkConfigFile
 	
@@ -474,7 +561,7 @@ run() {
 	elif echo "$1" | grep -qiE '^-{1,2}c(lear)?$'; then	
 		displayClearApp $2
 	elif echo "$1" | grep -qiE '^-{1,2}u(ninstall)?$'; then	
-		echo 'uninstall'
+		displayUninstall $2
 	elif echo "$1" | grep -qiE '^--?.*'; then
 		echo "commande inconnue"
 	else
