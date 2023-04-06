@@ -55,29 +55,6 @@ chiron() {
   # cordova run android
 }
 
-#todo Fonction qui retourne la liste des numéros de série des pda quand on fait adb devices
-getDevices() {
-  # Exécute la commande "adb devices" et stocke le résultat dans une variable
-  devices=$(adb devices)
-
-  # Vérifie si la chaîne "List of devices attached" se trouve dans le résultat
-  if [[ "$devices" == *"List of devices attached"* ]]; then
-    # Si la chaîne est présente, on peut extraire la liste des numéros de série à l'aide de la commande awk
-    devices=$(echo "$devices" | awk '{if (NR!=1) print $1}')
-    # Si la liste est vide, cela signifie qu'aucun périphérique n'est connecté
-    if [[ -z "$devices" ]]; then
-      echo "false"
-    else
-      # Sinon, on retourne la liste sous forme de tableau
-      echo "$devices"
-    fi
-  else
-    # Si la chaîne n'est pas présente, cela signifie qu'il y a eu une erreur lors de l'exécution de la commande "adb devices"
-    # On retourne la valeur "false"
-    echo "false"
-  fi
-}
-
 #todo Test d'extraction d'une BDD d'un PDA
 ext() {
 	adb shell run-as net.distrilog.easymobile sh -c "/ > /data/data/net.distrilog.easymobile/app_webview/Default/databases/file__0/1"
@@ -262,6 +239,7 @@ run() {
 			fi
 
 			local device_id=$(echo "$result" | awk '{print $1}')
+			echo 'device_id : '$device_id
 			# * si l'id du PDA n'a pas pu être récupéré
 			if [ -z "$device_id" ]; then
 				printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
@@ -361,10 +339,122 @@ run() {
 		done
 	}
 
+	checkAppInstalled() {
+		# * le num de série
+		SERIAL=$1
+		# * est-ce que l'app est installé
+		APP_INSTALLED=$(adb -s $SERIAL shell pm list packages | grep net.distrilog.easymobile)
+		if [[ -n "$APP_INSTALLED" ]]; then
+			echo "true"
+		else
+			echo "false"
+		fi
+	}
+
+	displayClearApp() {
+
+		pda=$1
+		# * est-ce qu'on a des pda de branchés
+		if [ "$(echo "$devices" | tr -d '\r\n')" = "List of devices attached" ]; then
+			adb devices -l
+			printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+			return 1
+		fi
+
+		# * pas d'arguments
+		if [ -z "$pda" ]; then
+			# * on récupère le pda demandé par l'user
+			read -p "Veuillez cibler le PDA à clear [défaut : $DEFAULT_PDA]: " name
+			local name=${name:-$DEFAULT_PDA}
+
+			# * on récupère le modèle et on converti les caractères minuscule en majuscule
+			local model=$(echo "$name" | tr '[:lower:]' '[:upper:]')
+			local result=$(echo "$devices" | grep -iw "$model")
+
+			# * si le pda n'a pas été trouvé
+			if [ -z "$result" ]; then
+				printf $BRed"Erreur: $model non trouvé."$Color_Off
+				return 1
+			fi
+
+			# * si l'id du PDA n'a pas pu être récupéré
+			local device_id=$(echo "$result" | awk '{print $1}')
+			if [ -z "$device_id" ]; then
+				printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+				return 1
+			fi
+
+			# todo on lance le clear ...
+			# * est-ce que l'app est installé sur le pda
+			if [ $(checkAppInstalled $device_id) = 'false' ]; then
+				printf "EasyMobile n'est pas installé sur le PDA $model"
+				return 1
+			fi
+
+			printf "${BBlue}Clear du stockage du pda $model en cours ...${Color_Off}\n"
+			result=$(adb -s $device_id shell pm clear net.distrilog.easymobile)
+			
+			if [ $result = 'Success' ]; then
+				printf "${BGreen}L'application a bien été clear !${Color_Off}\n"
+				printf "${BBlue}Lancement de l'application ...${Color_Off}\n"
+				adb -s $device_id shell am start -n net.distrilog.easymobile/.MainActivity > /dev/null 2>&1
+				printf "${BGreen}L'application a bien été lancé !${Color_Off}\n"
+			else
+				printf $BRed"Erreur lors du clear de l'application."$Color_Off
+				return 1
+			fi
+
+		# * sinon, si on a un argument
+		else
+			local model=$(echo "$pda" | tr '[:lower:]' '[:upper:]')
+			local result=$(echo "$devices" | grep -iw "$model")
+
+			# * si le pda demandé n'a pas été trouvé
+			if [ -z "$result" ]; then
+				printf $BRed"Erreur: $pda non trouvé."$Color_Off
+				return 1
+			fi
+
+			local device_id=$(echo "$result" | awk '{print $1}')
+			# * si l'id du pda n'a pas été trouvé
+			if [ -z "$device_id" ]; then
+				printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+				return 1
+			fi
+
+			# * est-ce que l'app est installé sur le pda
+			if [ $(checkAppInstalled $device_id) = 'false' ]; then
+				printf "EasyMobile n'est pas installé sur le PDA $model"
+				return 1
+			fi
+
+			printf "${BBlue}Clear du stockage du pda $model en cours ...${Color_Off}\n"
+			result=$(adb -s $device_id shell pm clear net.distrilog.easymobile)
+			
+			if [ $result = 'Success' ]; then
+				printf "${BGreen}L'application a bien été clear !${Color_Off}\n"
+				printf "${BBlue}Lancement de l'application ...${Color_Off}\n"
+				adb -s $device_id shell am start -n net.distrilog.easymobile/.MainActivity > /dev/null 2>&1
+				printf "${BGreen}L'application a bien été lancé !${Color_Off}\n"
+			else
+				printf $BRed"Erreur lors du clear de l'application."$Color_Off
+				return 1
+			fi
+		fi
+	}
+
 	# * on lance checkConfigFile afin de créer le fichier de config
 	checkConfigFile
 	
 
+	# lancement de l'appli
+	# adb -s 21245B18DD shell am start -n net.distrilog.easymobile/.MainActivity
+	# fermeture de l'appli
+	# adb -s 21245B18DD shell am force-stop net.distrilog.easymobile
+	# vidage du stockage de l'appli
+	# adb -s 21245B18DD shell pm clear net.distrilog.easymobile
+	# désinstaller l'appli
+	# adb -s 21245B18DD uninstall net.distrilog.easymobile
 	# * Liste des commandes disponibles
 	if echo "$1" | grep -qiE '^-{1,2}h(elp)?$'; then
 		displayHelp
@@ -381,6 +471,10 @@ run() {
 		displayVersion
 	elif echo "$1" | grep -qiE '^-{1,2}l(ist)?$'; then
 		displayListActivesPda
+	elif echo "$1" | grep -qiE '^-{1,2}c(lear)?$'; then	
+		displayClearApp $2
+	elif echo "$1" | grep -qiE '^-{1,2}u(ninstall)?$'; then	
+		echo 'uninstall'
 	elif echo "$1" | grep -qiE '^--?.*'; then
 		echo "commande inconnue"
 	else

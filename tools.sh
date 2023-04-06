@@ -3,8 +3,10 @@
 #todo PERMET DE RELOAD LE TERMINAL
 #todo A FAIRE APRES CHAQUE MODIFICATION ET SAUVEGARDE
 reload () {
-	source ~/.bashrc
-	printf $BIGreen"Restart de la console effectué !"$Color_Off
+	# source ~/.bashrc
+	# exec bash -c "source ~/.bashrc"
+	exec bash
+	# printf $BIGreen"Restart de la console effectué !"$Color_Off
 }
 alias RELOAD='reload'
 alias rel='reload'
@@ -20,6 +22,8 @@ SRC_DIR=$FILE_PATH"/src"
 if [ -e "$SRC_DIR/utils/utils.sh" ]; then
 	source "$SRC_DIR/utils/utils.sh"
 fi
+
+printf $BIGreen"Chargement du script tools.sh réussi !"$Color_Off
 
 # ! IMPORTATION DES FICHIERS
 # * on parcours les sous répertoires de src
