@@ -485,12 +485,9 @@ run() {
 			result=$(adb -s $device_id uninstall net.distrilog.easymobile)
 			
 			if [ $result = 'Success' ]; then
-				printf "${BGreen}L'application a bien été clear !${Color_Off}\n"
-				printf "${BBlue}Lancement de l'application ...${Color_Off}\n"
-				adb -s $device_id shell am start -n net.distrilog.easymobile/.MainActivity > /dev/null 2>&1
-				printf "${BGreen}L'application a bien été lancé !${Color_Off}\n"
+				printf "${BGreen}L'application a bien été désinstallé !${Color_Off}\n"
 			else
-				printf $BRed"Erreur lors du clear de l'application."$Color_Off
+				printf $BRed"Erreur lors de la désinstallation de l'application."$Color_Off
 				return 1
 			fi
 
