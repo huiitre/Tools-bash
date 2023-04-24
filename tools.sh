@@ -23,8 +23,6 @@ if [ -e "$SRC_DIR/utils/utils.sh" ]; then
 	source "$SRC_DIR/utils/utils.sh"
 fi
 
-printf $BIGreen"Chargement du script tools.sh réussi !"$Color_Off
-
 # ! IMPORTATION DES FICHIERS
 # * on parcours les sous répertoires de src
 for dir in "$SRC_DIR"/*/
@@ -41,3 +39,5 @@ do
 		fi
 	fi
 done
+
+printf $BIGreen"Chargement du script tools.sh réussi !"$Color_Off

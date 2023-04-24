@@ -527,10 +527,53 @@ run() {
 		fi
 	}
 
+	displayGenerateBuild() {
+		local options=("Debug" "Release")
+		local selected=0
+
+		# Afficher les options avec un curseur à côté de l'option sélectionnée
+		while true; do
+			clear
+			for ((i=0; i<${#options[@]}; i++)); do
+				if [ $i -eq $selected ]; then
+					echo "> ${options[$i]}"
+				else
+					echo "  ${options[$i]}"
+				fi
+			done
+
+			# Attendre l'entrée de l'utilisateur
+			read -s -n 1 key
+			case $key in
+				A)  # Flèche haut
+					((selected--))
+					if [ $selected -lt 0 ]; then
+						selected=$((${#options[@]}-1))
+					fi
+					;;
+				B)  # Flèche bas
+					((selected++))
+					if [ $selected -ge ${#options[@]} ]; then
+						selected=0
+					fi
+					;;
+				'') # Touche entrer
+					break
+					;;
+			esac
+		done
+
+		# Exécuter la commande Cordova avec l'option sélectionnée
+		if [ $selected -eq 0 ]; then
+			cordova build android --debug
+		else
+			cordova build android --release
+		fi
+	}
+
 	# * on lance checkConfigFile afin de créer le fichier de config
 	checkConfigFile
 	
-
 	# lancement de l'appli
 	# adb -s 21245B18DD shell am start -n net.distrilog.easymobile/.MainActivity
 	# fermeture de l'appli
@@ -559,6 +602,8 @@ run() {
 		displayClearApp $2
 	elif echo "$1" | grep -qiE '^-{1,2}u(ninstall)?$'; then	
 		displayUninstall $2
+	elif echo "$1" | grep -qiE '^-{1,2}b(uild)?$'; then	
+		displayGenerateBuild
 	elif echo "$1" | grep -qiE '^--?.*'; then
 		echo "commande inconnue"
 	else
