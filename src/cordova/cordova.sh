@@ -192,6 +192,46 @@ run() {
 		fi
 	}
 
+	displayPdaList() {
+		# Récupère la liste des périphériques connectés
+		devices=$(adb devices -l | sed '1d' | awk '/device/{print $1}')
+
+		# Initialise le tableau
+		output=()
+
+		# Parcours chaque périphérique et récupère les informations nécessaires
+		for device in $devices
+		do
+			# Récupère les propriétés du périphérique
+			model=$(adb -s $device shell getprop ro.product.model | tr -d '\r' || echo "null")
+			serial=$(adb -s $device shell getprop ro.serialno | tr -d '\r' || echo "null")
+			versionEM=$(adb -s $device shell dumpsys package net.distrilog.easymobile | grep versionName | sed 's/.*versionName=//;s/[" ]//g' || null)
+			versionAndroid=$(adb -s $device shell getprop ro.build.version.release)
+
+			# Ignore les périphériques avec des propriétés manquantes
+			# if [[ $model == "null" || $serial == "null" ]]; then
+			# 	continue
+			# fi
+
+			# Ajoute les propriétés au tableau
+			output+=("$model" "$serial" "$versionEM" "$versionAndroid")
+		done
+
+		# Affiche le tableau
+		printf "${BGreen}Liste des pda${Color_Off}\n"
+		if [ ${#output[@]} -gt 0 ]; then
+			printf "%-20s %-20s %-20s %-20s\n" "Model" "Serial Number" "EM version" "Android version"
+			printf "%-20s %-20s %-20s %-20s\n" "-----" "-------------" "----------" "---------------"
+
+			for ((i=0; i<${#output[@]}; i+=4))
+			do
+				printf "%-20s %-20s %-20s %-20s\n" "${output[$i]}" "${output[$i+1]}" "${output[$i+2]}" "${output[$i+3]}"
+			done
+		else
+			printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
+		fi
+	}
+
 	runPda() {
 		# * si le résultat est vide
 		if [ "$(echo "$devices" | tr -d '\r\n')" = "List of devices attached" ]; then
@@ -222,8 +262,8 @@ run() {
 				return 1
 			fi
 
+			displayPdaList
 			printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
-			adb devices -l
 			cordova run android --target="$device_id"
 
 		# * l'argument n'est pas vide, on continue
@@ -239,15 +279,14 @@ run() {
 			fi
 
 			local device_id=$(echo "$result" | awk '{print $1}')
-			echo 'device_id : '$device_id
 			# * si l'id du PDA n'a pas pu être récupéré
 			if [ -z "$device_id" ]; then
 				printf $BRed"Erreur: aucun appareil trouvé."$Color_Off
 				return 1
 			fi
 
+			displayPdaList
 			printf "${BGreen}Lancement du build en cours ...${Color_Off}\n"
-			adb devices -l
 			cordova run android --target="$device_id"
 		fi
 	}
@@ -593,7 +632,7 @@ run() {
 			echo -e $BRed"Pour activer la fonctionnalité, veuillez modifier la variable CONFIG_FILE en lui spécifiant un chemin correct et accessible en lecture et écriture."$Color_Off
 		fi
 	elif echo "$1" | grep -qiE '^-{1,2}l(ist)?$'; then
-		echo "LISTE EN COURS DE DEVELOPPEMENT"
+		displayPdaList
 	elif echo "$1" | grep -qiE '^-{1,2}v(ersion)?$'; then
 		displayVersion
 	elif echo "$1" | grep -qiE '^-{1,2}l(ist)?$'; then
