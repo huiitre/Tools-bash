@@ -19,6 +19,9 @@ done
 # todo Importation de la fonction RUN
 source "c:\dev\run-pda-shell\run.sh"
 
+# todo alias adbd vers run -l pour affichage de la liste des pda (nécessite que la fonction run soit importé avant)
+alias adbd="run -l"
+
 #todo CHIRON BUILDER
 chiron() {
 	#? Le dossier de chiron
@@ -66,7 +69,7 @@ ext() {
 	# Besoin de root le pda
 }
 
-alias adbd='adb devices -l'
+# alias adbd='adb devices -l'
 
 #todo /-----/ LOG JAVA /-----/
 logcat() {
