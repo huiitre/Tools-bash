@@ -45,6 +45,25 @@ checkout() {
 	fi
 }
 
+#  * [new branch]          Bug/#14219   -> origin/Bug/#14219
+#  * [new branch]          Bug/#14849   -> origin/Bug/#14849
+#  * [new branch]          Bug/#14881   -> origin/Bug/#14881
+#  * [new branch]          Bug/#14887_3 -> origin/Bug/#14887_3
+#  * [new branch]          Bug/#14929   -> origin/Bug/#14929
+#  * [new branch]          Bug/#14934_2 -> origin/Bug/#14934_2
+#  * [new branch]          Bug/#14956   -> origin/Bug/#14956
+#  * [new branch]          Bug/#14984   -> origin/Bug/#14984
+#  * [new branch]          Bug/#15000   -> origin/Bug/#15000
+#  * [new branch]          Bug/#15051   -> origin/Bug/#15051
+#  * [new branch]          Bug/#15053   -> origin/Bug/#15053
+#  * [new branch]          Bug/#15131   -> origin/Bug/#15131
+#  * [new branch]          Bug/#15131_2 -> origin/Bug/#15131_2
+#  * [new branch]          Bug/#15131_3 -> origin/Bug/#15131_3
+#  * [new branch]          Bug/#15193   -> origin/Bug/#15193
+#  * [new branch]          Bug/#15193_2 -> origin/Bug/#15193_2
+#  * [new branch]          Bug/#15252   -> origin/Bug/#15252
+#  * [new branch]          Bug/#15252_2 -> origin/Bug/#15252_2
+
 #todo RESET COMMIT (pour le dev de la fonction commit)
 gitreset () {
 	ret='git reset --soft HEAD^'
