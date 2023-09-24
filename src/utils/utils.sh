@@ -39,3 +39,5 @@ quote_args() {
 			# echo -n "$space'${arg//$sq/$backtic$sq}'"
 	done
 }
+
+alias ll="ls -alF"
