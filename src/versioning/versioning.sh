@@ -92,6 +92,6 @@ commit() {
     printf "$On_Green Message : $message$Color_Off\n\n"
     git commit -m "$message"
   else
-    printf "Le message de commit est vide !"
+    printf "Le message de commit est vide !\n"
   fi
 }

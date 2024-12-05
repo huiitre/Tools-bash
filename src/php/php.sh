@@ -29,11 +29,11 @@ dfl () {
 	if [ -z $param ]
 	then
 		printf $On_Green$BCyan"Commande :$Color_Off\n"
-		printf $On_IRed$BCyan"> php bin/console d:f:l$Color_Off"
+		printf $On_IRed$BCyan"> php bin/console d:f:l$Color_Off\n"
 		php bin/console d:f:l
 	else
 		printf $On_Green$BCyan"Commande :$Color_Off\n"
-		printf $On_IRed$BCyan"> php bin/console d:f:l --group=$param$Color_Off"
+		printf $On_IRed$BCyan"> php bin/console d:f:l --group=$param$Color_Off\n"
 		php bin/console d:f:l --group=$param
 	fi
 }

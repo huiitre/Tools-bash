@@ -53,7 +53,7 @@ run_old () {
 				echo '##################################'
 				echo "||    LANCEMENT DU BUILD ...    ||"
 				echo '##################################'
-				printf $BIPurple"PDA : $opt$Color_Off"
+				printf $BIPurple"PDA : $opt$Color_Off\n"
 				ret=$RACINE_PATH"run_$name.bat"
 				$ret
 			# * le pda demandé n'existe pas dans le dossier
@@ -89,7 +89,7 @@ run_old () {
 				echo '##################################'
 				echo "||    LANCEMENT DU BUILD ...    ||"
 				echo '##################################'
-				printf $BIPurple"PDA : $name$opt$Color_Off"
+				printf $BIPurple"PDA : $name$opt$Color_Off\n"
 				ret=$RACINE_PATH"run_$name.bat"
 				$ret
 			# * le pda demandé n'existe pas dans le dossier

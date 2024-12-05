@@ -40,4 +40,4 @@ do
 	fi
 done
 
-printf $BIGreen"Chargement du script tools.sh réussi !"$Color_Off
+printf $BIGreen"Chargement du script tools.sh réussi !\n"$Color_Off
