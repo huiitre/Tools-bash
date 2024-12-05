@@ -17,7 +17,8 @@ do
 done
 
 # todo Importation de la fonction RUN
-source "c:\dev\run-pda-shell\run.sh"
+# remplacé par le package npm dtl_runpda
+# source "c:\dev\run-pda-shell\run.sh"
 
 # todo alias adbd vers run -l pour affichage de la liste des pda (nécessite que la fonction run soit importé avant)
 alias adbd="run -l"
